@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
   Room.init({
     name: {
       type : DataTypes.STRING,
+      unique : {args : true, msg : 'room name already exists'},
       validate : {
         len: {
           // validasi nama room jika lebih dari 12 huruf atau kurang dari 4 huruf
