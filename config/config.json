@@ -1,0 +1,10 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "meginia12",
+    "database": "horse_race",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "operatorsAliases": false
+  }
+}
