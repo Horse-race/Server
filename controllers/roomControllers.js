@@ -1,6 +1,30 @@
 const {Room} = require('../models')
-// const kue = require('kue')
-// const queue = kue.createQueue()
+const kue = require('kue')
+const queue = kue.createQueue({redis: process.env.REDIS_URL})
+
+queue.process('join-to-room', (job,done) => {
+
+    console.log(job.data)
+    const {payload} = job.data // mengambil data dari job 
+
+    Room
+        .findOne({where : {name : payload.roomName}})
+        .then(results => {
+            let index = Object.keys(results.players).length  // menghitug jumlah keys dari players
+            let playerKey = `${index + 1}-${payload.playerName}` // membuat data player yang akan join
+            results.players[playerKey] = 0 // menambah key didalam players
+            results.changed("players",true) // fungsinya untuk memastikan data berubah karena tipe data JSON
+
+            return Promise.all([results.save(),playerKey]) // jalankan process multi promise untuk menyimpan data room dan data player yang baru masuk
+        })
+        .then(([results,playerKey]) => {
+            console.log({...results.dataValues})
+            done(null, {...results.dataValues, playerKey})
+        })
+        .catch(err => {
+            done(err)
+        })
+})
 
 class RoomController {
 
@@ -19,7 +43,7 @@ class RoomController {
 
     //untuk buat room
     static createRoom(data,cb){
-        console.log(data.name)
+        // console.log(data.name)
 
         let newRoom = {
             'name' : data.name, //nama room
@@ -48,8 +72,8 @@ class RoomController {
             .then(results => {
                 if(results){
                     delete results.players[payload.playerKey];
-                    results.changed("players", true)
-                    return results.save()
+                    results.changed("players", true) // untuk konfirmasi bahwa data players ada yang berubah karena data tipe JSON
+                    return results.save() // save data row yang dipilih
                   } 
             })
             .then(results => {
@@ -61,14 +85,26 @@ class RoomController {
     }
 
     //join room
-    static joinRoom(roomName,cb){
+    static joinRoom(payload,cb){
 
+        // var job = queue.create('join-on-room', {
+        //     payload,
+        //     cb
+        // }).save() //membuat job untuk melakukan process join room
+
+        // job.on('complete', (results) => {
+        //     console.log('work complete on', results)
+        //     cb(null,results) //callback dengan data results
+        // })
+        // .on('failed', (errorMessage) => {
+        //     cb('failed')
+        // })
     }
 
     static deleteRoom(roomName,cb){
         console.log('delete??')
         Room
-            .destroy({where : {name : payload.roomName}})
+            .destroy({where : {name : roomName}})
             .then(results => {
                 console.log('room has deleted')
                 cb(null)

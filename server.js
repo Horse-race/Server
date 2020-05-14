@@ -20,7 +20,7 @@ io.on('connection', function(socket){
                 socket.emit('show-error', 'unable to create room')
             }else{
                 io.emit('room-created', results) //send data ke room-created
-                // console.log(results)
+                console.log(results)
                 socket.join(results.name) // join room yang dibuat
                 socket.emit('joining-room', {...results, playerKey: `1-${results.playerName}`, isHost : true}) 
             }
@@ -45,6 +45,7 @@ io.on('connection', function(socket){
             if(err){
                 socket.emit('show-error', 'failed read all rooms')
             }else{
+                console.log(results)
                 socket.emit('get-rooms', results) //mengirim data results ke get-rooms
             }
         })
