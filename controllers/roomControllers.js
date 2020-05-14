@@ -1,6 +1,10 @@
 const {Room} = require('../models')
 const kue = require('kue')
-const queue = kue.createQueue({redis: process.env.REDIS_URL})
+const queue = kue.createQueue({
+    redis: process.env.REDIS_URL
+  })
+  
+
 
 queue.process('join-to-room', (job,done) => {
 
@@ -86,19 +90,19 @@ class RoomController {
 
     //join room
     static joinRoom(payload,cb){
+        console.log('sleep')
+        var job = queue.create('join-to-room', {
+            payload,
+            cb
+        }).save() //membuat job untuk melakukan process join room
 
-        // var job = queue.create('join-on-room', {
-        //     payload,
-        //     cb
-        // }).save() //membuat job untuk melakukan process join room
-
-        // job.on('complete', (results) => {
-        //     console.log('work complete on', results)
-        //     cb(null,results) //callback dengan data results
-        // })
-        // .on('failed', (errorMessage) => {
-        //     cb('failed')
-        // })
+        job.on('complete', (results) => {
+            console.log('work complete on', results)
+            cb(null,results) //callback dengan data results
+        })
+        .on('failed', (errorMessage) => {
+            cb('failed')
+        })
     }
 
     static deleteRoom(roomName,cb){

@@ -29,6 +29,7 @@ io.on('connection', function(socket){
 
     //join room
     socket.on('join-room', (payload) => {
+        console.log(payload)
         RoomController.joinRoom(payload, function(err, results){
             console.log('test')
             if(err){
