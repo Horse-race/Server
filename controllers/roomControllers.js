@@ -42,6 +42,30 @@ class RoomController {
 
     // leave room
     static leaveRoom(payload,cb){
+        
+        Room
+            .findOne({where : {name : payload.roomName}})
+            .then(results => {
+                if(results){
+                    delete results.players[payload.playerKey];
+                    results.changed("players", true)
+                    return results.save()
+                  } 
+            })
+            .then(results => {
+                cb(null,results.dataValues)
+            })
+            .catch(err => {
+                cb(err)
+            })
+    }
+
+    //join room
+    static joinRoom(roomName,cb){
+
+    }
+
+    static deleteRoom(roomName,cb){
         console.log('delete??')
         Room
             .destroy({where : {name : payload.roomName}})
@@ -54,12 +78,6 @@ class RoomController {
                 cb()
             })
     }
-
-    //join room
-    static joinRoom(roomName,cb){
-
-    }
-
 }
 
 module.exports = RoomController
