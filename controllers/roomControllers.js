@@ -81,6 +81,7 @@ class RoomController {
                   } 
             })
             .then(results => {
+                // console.log(results)
                 cb(null,results.dataValues)
             })
             .catch(err => {
@@ -105,10 +106,10 @@ class RoomController {
         })
     }
 
-    static deleteRoom(roomName,cb){
+    static deleteRoom(payload,cb){
         console.log('delete??')
         Room
-            .destroy({where : {name : roomName}})
+            .destroy({where : {name : payload.roomName}})
             .then(results => {
                 console.log('room has deleted')
                 cb(null)

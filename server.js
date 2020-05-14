@@ -58,17 +58,28 @@ io.on('connection', function(socket){
     socket.on('leave-room',(payload) => {
         socket.leave(payload.roomName)
         RoomController.leaveRoom(payload, (err,results) => {
+            console.log(results.players)
             io.to(payload.roomName).emit('player-left',results.players) //mengupdate data list player yang masih didalam room
             io.emit('update-client-room')
         })
     })
 
     socket.on('update-position',(payload) => {
-        socket.broadcast.to(payload.roomName).emit('update-position',payload) //trigger client untuk update posisi kuda
+        socket.broadcast.to(payload.roomName).emit('update-position',payload) //trigger semua client dalam room untuk update posisi kuda
     })
 
     socket.on('update-score',(payload) => {
-        socket.broadcast.to(payload.roomName).emit('update-score',payload) // trigger client untuk mengupdate score
+        socket.broadcast.to(payload.roomName).emit('update-score',payload) // trigger semua client dalam room untuk mengupdate score
+    })
+
+    socket.on('end-game',(roomName) => {
+        RoomController.deleteRoom(roomName, (err) => {
+            if(err){
+                io.emit('update-client-room')
+            }else{
+                io.to(roomName).emit('end-game') 
+            }
+        })
     })
 })
 
