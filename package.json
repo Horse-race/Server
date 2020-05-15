@@ -1,26 +1,28 @@
 {
-  "name": "kuta-tidur",
+  "name": "Server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "pg": "^8.2.0",
+    "sequelize": "^5.21.9",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {},
   "scripts": {
-    "test": "jest --detectOpenHandles --runInBand"
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Horse-race/Server.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "ioredis": "^4.16.3",
-    "kue": "^0.11.6",
-    "redis": "^3.0.2",
-    "sequelize": "^5.21.8",
-    "socket.io": "^2.3.0"
+  "bugs": {
+    "url": "https://github.com/Horse-race/Server/issues"
   },
-  "devDependencies": {
-    "jest": "^26.0.1",
-    "socket.io-client": "^2.3.0"
-  }
+  "homepage": "https://github.com/Horse-race/Server#readme"
 }
