@@ -9,10 +9,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 const fs = require('fs')
 const userdata = JSON.parse(fs.readFileSync('user.json','utf8'))
+let round = JSON.parse(fs.readFileSync('round.txt','utf8'))
 io.on('connection', (socket)=>{
   console.log('a user connected')
 
   io.emit('result-login', userdata)
+  io.emit('rounds', round)
 
   socket.on('login', (data) => {
     let newdata = userdata
@@ -47,15 +49,28 @@ io.on('connection', (socket)=>{
   })
 
   socket.on('movement', data => {
-    console.log(data);
+    // console.log(data);
     fs.writeFileSync('user.json', JSON.stringify(data, null, 2))
     io.emit('result-login', data)
   })
 
   socket.on('finish', data => {
-    io.emit('finish-msg', data)
+    fs.unlinkSync('user.json')
     fs.writeFileSync('user.json','[]')
+    io.emit('finish-msg', data)
     console.log('kereset');
+  })
+
+  socket.on('delete', data => {
+    fs.unlinkSync('user.json')
+    fs.writeFileSync('user.json','[]')
+  })
+
+  socket.on('round', data => {
+    console.log(data);
+    round = data
+    fs.writeFileSync('round.txt', round)
+    io.emit('rounds', round)
   })
 
 })
